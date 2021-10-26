@@ -49,7 +49,7 @@ function Layout({ children }) {
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => { setModalShow(false); setNewRoom("");}}>Close</Button>
+                    <Button variant="secondary" onClick={() => { setModalShow(false); setNewRoom("");}}>Cancel</Button>
                     <Button onClick={createBoardHandler}>Create Now!</Button>
                 </Modal.Footer>
             </Modal>
