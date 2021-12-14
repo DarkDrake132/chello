@@ -1,4 +1,3 @@
-const { addBasePath } = require('next/dist/shared/lib/router/router');
 const db=require('./db')
 
 function randomIdGenerate() {
@@ -7,36 +6,36 @@ function randomIdGenerate() {
 
 
 async function getTaskById(taskId) {
-    var taskQuery = `
+    let taskQuery = `
         SELECT name as "taskName", description, have_deadline as "haveDeadline", to_char(duedate,'dd/mm/yyyy') as "dueDate", is_expired as "isExpired", is_hidden as "isHidden"
         FROM task
         WHERE task_id='${taskId}'
     `
 
-    var taskData = await db.getQuery(taskQuery);
+    let taskData = await db.getQuery(taskQuery);
     if (taskData.length == 0) return null;
-    var res = taskData[0];
+    let res = taskData[0];
     if (new Date(res.dueDate) < new Date()) res.isExpired = true; else res.isExpired = false;
     
-    var labelQuery = `
+    let labelQuery = `
         SELECT l.label_id as "labelId", l.name as "labelName", l.color as "color"
         FROM label l
         JOIN label_of_task t on l.label_id=t.label_id
         WHERE t.task_id='${taskId}'
     `
-    var labelData = await db.getQuery(labelQuery);
+    let labelData = await db.getQuery(labelQuery);
     res.labels = labelData;
     return res;
 
 }
 
 function dateReformat(date) {
-    var tokens = date.split('/');
+    let tokens = date.split('/');
     return `${tokens[2]}-${tokens[1]}-${tokens[0]}`;
 }
 
 async function addTask(data) {
-    var query = `
+    let query = `
         INSERT INTO task (task_id, name, description, have_deadline, duedate, is_expired, is_hidden)
         VALUES ('${data.newId}','${data.taskName}','${data.description}','${data.haveDeadline}','${dateReformat(data.dueDate)}','${data.isExpired}','${data.isHidden}')
     `
@@ -54,24 +53,24 @@ async function addTask(data) {
 
 async function updateTaskById(data) {
     // update the basic information (not the label list)
-    var updateQuery = `
+    let updateQuery = `
         UPDATE task 
         SET name='${data.taskName}', description='${data.description}', have_deadline='${data.haveDeadline}', duedate='${dateReformat(data.dueDate)}', is_expired='${data.isExpired}', is_hidden='${data.isHidden}'
         WHERE task_id='${data.taskId}'
     `
     await db.executeQuery(updateQuery);
 
-    var getLabelQuery = `
+    let getLabelQuery = `
         SELECT *
         FROM label_of_task
         where task_id='${data.taskId}'
     `
 
-    var oldLabels = await db.getQuery(getLabelQuery);
+    let oldLabels = await db.getQuery(getLabelQuery);
 
     // add new labels
     for (let newLabel of data.labels) {
-        var isNew = true;
+        let isNew = true;
         for (let oldLabel of oldLabels) {
             if (oldLabel.label_id == newLabel) {
                 isNew = false;
@@ -90,7 +89,7 @@ async function updateTaskById(data) {
 
     //remove old labels
     for (let oldLabel of oldLabels) {
-        var isOld = true;
+        let isOld = true;
         for (let newLabel of data.labels) {
             if (oldLabel.label_id == newLabel) {
                 isOld = false;
