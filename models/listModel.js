@@ -41,4 +41,12 @@ async function getListById(listId) {
     return res;
 }
 
-module.exports={randomIdGenerate,addList,getListById}
+async function addTaskToList(taskId, listId) {
+    var query = `
+        INSERT INTO task_of_list (task_id,list_id)
+        VALUES ('${taskId}','${listId}')
+    `
+    await db.executeQuery(query);
+}
+
+module.exports={randomIdGenerate,addList,getListById,addTaskToList}
