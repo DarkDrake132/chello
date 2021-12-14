@@ -1,15 +1,9 @@
 const db = require("./db");
 const Task = require("./taskModel");
+const utils = require('../utils');
 
 function randomIdGenerate() {
     return `LI${Date.now().toString(16)}`;
-}
-
-function getNow() {
-    let raw = new Date();
-    return `${raw.getFullYear()}-${
-        raw.getMonth() + 1
-    }-${raw.getDate()} ${raw.getHours()}:${raw.getMinutes()}:${raw.getSeconds()}`;
 }
 
 async function addList(data) {
@@ -17,7 +11,7 @@ async function addList(data) {
         INSERT INTO list (list_id, name, description, created_at, is_hidden)
         VALUES ('${data.listId}','${data.listName}','${
         data.listDescription
-    }','${getNow()}',false)
+    }','${utils.getNow()}',false)
     `;
     await db.executeQuery(query);
 }
