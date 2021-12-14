@@ -37,7 +37,7 @@ function dateReformat(date) {
 async function addTask(data) {
     let query = `
         INSERT INTO task (task_id, name, description, have_deadline, duedate, is_expired, is_hidden)
-        VALUES ('${data.newId}','${data.taskName}','${data.description}','${data.haveDeadline}','${dateReformat(data.dueDate)}','${data.isExpired}','${data.isHidden}')
+        VALUES ('${data.taskId}','${data.taskName}','${data.description}','${data.haveDeadline}','${dateReformat(data.dueDate)}','${data.isExpired}','${data.isHidden}')
     `
     await db.executeQuery(query);
 

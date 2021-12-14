@@ -1,6 +1,7 @@
 const Task=require('../../../models/taskModel')
 
 async function handler(req, res) {
+    // [GET] /api/task/:id
     if (req.method === "GET") {
         let data = await Task.getTaskById(req.query.id);
         if (data) {
@@ -10,6 +11,7 @@ async function handler(req, res) {
         }
     }
 
+    // [PUT] /api/task/:id
     if (req.method === "PUT") {
         await Task.updateTaskById({...req.body,taskId:req.query.id});
         let data = await Task.getTaskById(req.query.id);
