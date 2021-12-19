@@ -1,8 +1,9 @@
 import styles from '../styles/Home.module.css'
 import Board from '../component/Board/Board';
-
+ 
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+
 
 export default function Home(props) {
   const router = useRouter();
