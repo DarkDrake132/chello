@@ -1,5 +1,5 @@
+/* eslint-disable @next/next/no-css-tags */
 import { Fragment } from "react";
-import Image from "next/image";
 import Head from "next/head";
 
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -18,7 +18,7 @@ export default function Login() {
         // The signed-in user info.
         const user = result.user;
         console.log(token, user)
-        auth.signOut();
+        router.push(`/`);
         // ...
       })
       .catch((error) => {
@@ -37,7 +37,7 @@ export default function Login() {
     <Fragment>
       <Head>
         <title>Login V4</title>
-        <meta charset="UTF-8" />
+        <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         <link rel="icon" type="image/png" href="/images/icons/favicon.ico" />
