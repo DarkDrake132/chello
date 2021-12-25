@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Layout from "../hoc/Layout/Layout";
 import { Provider } from "react-redux";
 import store from "../store";
-import AuthProvider from "../context/authProvider";
+import AuthProvider from "../context/AuthContext";
 
 function MyApp({ Component, pageProps }) {
   return (

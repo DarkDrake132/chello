@@ -8,16 +8,22 @@ import {
 } from "react-bootstrap";
 import { useRouter } from "next/router";
 
-import { auth } from "../../firebase/config";
+import { useAuth } from "../../context/AuthContext";
 
 function Header({ createBoard }) {
+  const { logout } = useAuth();
   const router = useRouter();
 
   const popover = (
     <Popover id="popover-basic">
       <Popover.Header as="h3">Account actions</Popover.Header>
       <Popover.Body>
-        <Button onClick={() => auth.signOut()} variant="danger">Log out</Button>
+        <Button
+          onClick={logout}
+          variant="danger"
+        >
+          Log out
+        </Button>
       </Popover.Body>
     </Popover>
   );
