@@ -14,7 +14,6 @@ import { useAuth } from "../../context/AuthContext";
 function Header({ createBoard }) {
   const { logout } = useAuth();
   const { user } = useAuth();
-  console.log(user);
   const router = useRouter();
 
   const popover = (

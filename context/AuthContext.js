@@ -5,7 +5,7 @@ import {
   signInWithPopup,
   getAdditionalUserInfo,
 } from "firebase/auth";
-import { auth, db } from "../firebase/config";
+import { auth } from "../firebase/config";
 import { addDocument } from "../firebase/service";
 
 import { useRouter } from "next/router";

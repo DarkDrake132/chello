@@ -6,6 +6,7 @@ import { Accordion } from "react-bootstrap";
 export default function RoomList() {
   const router = useRouter();
   const { board } = router.query;
+
   return (
     <div>
       <Accordion>

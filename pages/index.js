@@ -1,39 +1,33 @@
+import { useState, useMemo } from 'react'
+import { useRouter } from 'next/router'
+
 import styles from '../styles/Home.module.css'
 import Board from '../component/Board/Board';
 
-import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useAuth } from '../context/AuthContext';
+import useFirestore from '../hooks/useFirestore';
 
 export default function Home(props) {
   const router = useRouter();
 
-  const [ board, setBoard ] = useState([
-    {
-      id: 1,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    },
-    {
-      id: 2,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'QHTT'
-    },
-    {
-      id: 3,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'Thiết kế giao diện'
-    },
-    {
-      id: 4,
-      image: `https://th.bing.com/th/id/R.7414d461bf1f6c332a38aca5d297222d?rik=gHvWKb9rAYLbAA&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    },
-    {
-      id: 5,
-      image: `https://th.bing.com/th/id/R.7414d461bf1f6c332a38aca5d297222d?rik=gHvWKb9rAYLbAA&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    }
-  ])
+  const { user } = useAuth();
+  
+  /**
+   * {
+   *  name: "room name",
+   * description: "room description",
+   * members: [uid1, uid2, ...]
+   * }
+   */
+   const roomsCondition = useMemo(() => {
+     return {
+      fieldName: "members",
+      operator: "array-contains",
+      compareValue: user?.uid,
+     }
+   }, [user?.uid])
+
+   const rooms = useFirestore("rooms", roomsCondition);
 
   function boardHanlder(id) {
     if (id) {
@@ -45,12 +39,16 @@ export default function Home(props) {
 
   return (
     <div className={styles.Container + ' container d-flex flex-wrap rounded'}>
-      {board.map((item) => {
+      {rooms.map(room => {
         return (
-          <Board key={item.id} image={item.image} boardName={item.boardName} clicked={() => boardHanlder(item.id)} />
+          <Board
+            key={room.id}
+            image={`https://th.bing.com/th/id/OIP.7KQv5iIl5pP1RGC5ICS5SQHaEo?pid=ImgDet&rs=1`}
+            boardName={room.name}
+            onClick={() => boardHanlder(room.id)}
+          />
         )
       })}
-      <Board image={`https://th.bing.com/th/id/OIP.7KQv5iIl5pP1RGC5ICS5SQHaEo?pid=ImgDet&rs=1`} boardName="Create new Room" clicked={() => boardHanlder()}></Board>
     </div>
   )
 }
