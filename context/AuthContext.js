@@ -3,8 +3,11 @@ import { useState, useEffect, createContext, useContext } from "react";
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  getAdditionalUserInfo,
 } from "firebase/auth";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
+import { addDocument } from "../firebase/service";
+
 import { useRouter } from "next/router";
 
 const authContextDefaults = {
@@ -12,7 +15,7 @@ const authContextDefaults = {
   login: () => {},
   logout: () => {},
 };
-const AuthContext = createContext(authContextDefaults);
+export const AuthContext = createContext(authContextDefaults);
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -25,9 +28,19 @@ export default function AuthProvider({ children }) {
   const provider = new GoogleAuthProvider();
   const router = useRouter();
   useEffect(() => {
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        router.push("/");
+    auth.onAuthStateChanged((userCheck) => {
+      if (userCheck) {
+        if (user === null) {
+          setUser({
+            displayName: userCheck.displayName,
+            photoURL: userCheck.photoURL,
+            email: userCheck.email,
+            uid: userCheck.uid,
+          })
+        }
+        if (router.pathname === "/login") {
+          router.push("/");
+        }
       } else {
         router.push("/login");
       }
@@ -43,8 +56,16 @@ export default function AuthProvider({ children }) {
         // The signed-in user info.
         const user = result.user;
         const { displayName, email, photoURL, uid } = user;
+        if (getAdditionalUserInfo(result).isNewUser) {
+          addDocument("users", {
+            displayName: displayName,
+            photoURL: photoURL,
+            email: email,
+            uid: uid,
+            providerId: credential.providerId,
+          })
+        }
         setUser({ displayName, email, photoURL, uid });
-        console.log({ credential, token, user });
       })
       .catch((error) => {
         // Handle Errors here.

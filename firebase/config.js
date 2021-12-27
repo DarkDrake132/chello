@@ -2,8 +2,8 @@
 import { initializeApp, getApps } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-import { getFirestore } from "firebase/firestore";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyBGVnL4s696zBN0Ze-bS4KHml_VUJqV5JI",
   authDomain: "chello-dea9c.firebaseapp.com",
@@ -20,4 +20,10 @@ if (!getApps().length) {
 
 const db = getFirestore();
 const auth = getAuth();
+
+connectAuthEmulator(auth, "http://localhost:9099");
+if (window.location.hostname === "localhost") {
+  connectFirestoreEmulator(db, "localhost", 8080);
+}
+
 export { db, auth };

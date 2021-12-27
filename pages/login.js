@@ -135,13 +135,14 @@ export default function Login() {
                   <i className="fa fa-twitter"></i>
                 </a>
 
-                <a
-                  href="#"
+                <button
+                  onClick={login}
+                  type="button"
                   className="login100-social-item bg3"
                   style={{ textDecoration: "none" }}
                 >
-                  <i className="fa fa-google" onClick={login}></i>
-                </a>
+                  <i className="fa fa-google"></i>
+                </button>
               </div>
 
               <div className="flex-col-c p-t-155">

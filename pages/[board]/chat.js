@@ -1,7 +1,12 @@
+import BoardLayout from "../../hoc/BoardLayout/BoardLayout";
+import ChatWindow from "../../component/ChatWindow";
+
 const ChatRoom = () => {
-    return (
-        <p>This is a chat room</p>
-    )
+  return (
+    <BoardLayout>
+      <ChatWindow />
+    </BoardLayout>
+  );
 };
 
 export default ChatRoom;
