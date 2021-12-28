@@ -21,12 +21,12 @@ const useFirestore = (collectionQuery, condition) => {
       where(condition.fieldName, condition.operator, condition.compareValue),
     );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const documents = snapshot.docs.map((doc) =>
-        doc.data({
-          ...doc.data,
+      const documents = snapshot.docs.map((doc) => {
+        return {
+          ...doc.data(),
           id: doc.id,
-        })
-      );
+        };
+      })
       setDocument(documents);
     });
 

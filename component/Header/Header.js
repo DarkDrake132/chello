@@ -11,7 +11,7 @@ import Avatar from "@atlaskit/avatar";
 
 import { useAuth } from "../../context/AuthContext";
 
-function Header({ createBoard }) {
+function Header() {
   const { logout } = useAuth();
   const { user } = useAuth();
   const router = useRouter();

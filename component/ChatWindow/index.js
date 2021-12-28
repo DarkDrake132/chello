@@ -2,13 +2,13 @@ import { Fragment } from "react";
 import ChatList from "../ChatList/ChatList";
 import ChatForm from "../ChatList/ChatForm";
 
-export default function ChatWindow() {
+export default function ChatWindow({ selectedRoom }) {
   return (
     <Fragment>
       <div>
         <div>
-          <p>Room name</p>
-          <span>Đây là room default</span>
+          <p>{selectedRoom.name}</p>
+          <span>{selectedRoom.description}</span>
         </div>
         <ChatList />
         <ChatForm />
