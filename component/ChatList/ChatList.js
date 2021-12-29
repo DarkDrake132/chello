@@ -1,7 +1,35 @@
-import React from "react";
+import React, { useMemo } from "react";
+
+import { useApp } from "../../context/AppProvider";
+import  useFirestore from "../../hooks/useFirestore";
+
+import { formatRelative } from "date-fns/esm";
+
 import ChatMessage from "./ChatMessage";
 
 export default function ChatList() {
+  const { selectedRoomId } = useApp();
+  const condition = useMemo(() => ({
+    fieldName: "roomId",
+    operator: "==",
+    compareValue: selectedRoomId,
+  }), [selectedRoomId])
+  const messages = useFirestore("messages", condition);
+
+  console.log(messages);
+
+  const formatDate = (seconds) => {
+    let formatDate = '';
+    if (seconds) {
+      const date = new Date(seconds * 1000);
+      formatDate = formatRelative(date, new Date());
+
+      formatDate = formatDate.charAt(0).toUpperCase() + formatDate.slice(1);
+    }
+
+    return formatDate;
+  }
+
   return (
     <div
       className="d-flex align-items-start-end flex-column justify-content-end"
@@ -12,30 +40,19 @@ export default function ChatList() {
         overFlowY: "auto",
       }}
     >
-      <ChatMessage
-        text="Text"
-        photoURL={null}
-        displayName="Bach"
-        createAt={123213213213123}
-      />
-      <ChatMessage
-        text="Text 123"
-        photoURL={null}
-        displayName="Bach"
-        createAt={123213213213123}
-      />
-      <ChatMessage
-        text="Text test"
-        photoURL={null}
-        displayName="Bach"
-        createAt={123213213213123}
-      />
-      <ChatMessage
-        text="Text oke"
-        photoURL={null}
-        displayName="Bach"
-        createAt={123213213213123}
-      />
+      {messages.map(message => 
+      {
+        return (
+
+          <ChatMessage
+          key={message.id}
+          text={message.text}
+          photoURL={message.photoURL}
+          displayName={message.displayName}
+          createAt={formatDate(message.createdAt)}
+        />
+        )
+      })}
     </div>
   );
 }
