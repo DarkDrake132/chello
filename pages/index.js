@@ -18,10 +18,6 @@ export default function Home() {
   });
   const { setSelectedRoomId } = useApp();
 
-  useEffect(() => {
-    setSelectedRoomId("");
-  }, [])
-
   const router = useRouter();
   const { rooms, isAddRoomVisible, setIsAddRoomVisible } = useApp();
   const { user } = useAuth();
