@@ -7,6 +7,7 @@ import store from "../store";
 import AuthProvider from "../context/AuthContext";
 import AppProvider from "../context/AppProvider";
 
+
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
