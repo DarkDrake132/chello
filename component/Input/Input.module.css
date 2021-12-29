@@ -1,0 +1,21 @@
+.addCard {
+    padding-left: 8px;
+    height: 36px;
+    line-height: 36px;
+    margin: 0 8px;
+}
+
+.addCard:hover {
+    background-color: #ddd;
+    border-radius: 4px;
+}
+
+.addCardContainer {
+    margin: 8px;
+}
+
+.inputContainer {
+    width: 300px;
+    background-color: #EBECF0;
+    height: 36px;
+}
