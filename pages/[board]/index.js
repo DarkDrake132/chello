@@ -1,9 +1,10 @@
-import List from "../component/List/List"
-import store from '../utils/store'
+import List from "../../component/List/List"
+
+import store from '../../utils/store'
 import { useState } from "react"
-import StoreApi from "../utils/storeApi"
+import StoreApi from "../../utils/storeApi"
 import { uuid } from "uuidv4"
-import InputContainer from "../component/Input/InputContainer"
+import InputContainer from "../../component/Input/InputContainer"
 import { DragDropContext } from "react-beautiful-dnd"
 import { Droppable } from "react-beautiful-dnd"
 
