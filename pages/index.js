@@ -1,57 +1,121 @@
-import styles from '../styles/Home.module.css'
-import Board from '../component/Board/Board';
- 
-import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
+import { useApp } from "../context/AppProvider";
+import { useAuth } from "../context/AuthContext";
 
-export default function Home(props) {
+import { addDocument } from "../firebase/service";
+
+import styles from "../styles/Home.module.css";
+import Board from "../component/Board/Board";
+
+import { Modal, Button, FormControl } from "react-bootstrap";
+
+export default function Home() {
+  const [room, setRoom] = useState({
+    name: "",
+    description: "",
+  });
+  const { setSelectedRoomId } = useApp();
+
   const router = useRouter();
-
-  const [ board, setBoard ] = useState([
-    {
-      id: 1,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    },
-    {
-      id: 2,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'QHTT'
-    },
-    {
-      id: 3,
-      image: `https://th.bing.com/th/id/R.3ed7cfc51b4d3b1d8ad2731da7c5ab58?rik=KK%2fN1qGA37HlTQ&pid=ImgRaw&r=0`,
-      boardName: 'Thiết kế giao diện'
-    },
-    {
-      id: 4,
-      image: `https://th.bing.com/th/id/R.7414d461bf1f6c332a38aca5d297222d?rik=gHvWKb9rAYLbAA&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    },
-    {
-      id: 5,
-      image: `https://th.bing.com/th/id/R.7414d461bf1f6c332a38aca5d297222d?rik=gHvWKb9rAYLbAA&pid=ImgRaw&r=0`,
-      boardName: 'Software Modeling'
-    }
-  ])
+  const { rooms, isAddRoomVisible, setIsAddRoomVisible } = useApp();
+  const { user } = useAuth();
 
   function boardHanlder(id) {
-    if (id) {
-      router.push(`/${id}`);
+    setSelectedRoomId(id);
+    router.push(`/${id}`);
+  }
+
+  function createBoardHandler() {
+    if (room.name.length === 0) {
+      alert("Please enter a name for the board");
+      return;
     } else {
-      props.modalHandler()
+      addDocument("rooms", {...room, members: [user.uid]});
+      setIsAddRoomVisible(false);
+      setRoom({
+        name: "",
+        description: "",
+      });
     }
   }
 
+  function handleChange(e) {
+    e.preventDefault();
+    setRoom({
+      ...room,
+      [e.target.name]: e.target.value,
+    });
+  }
+
   return (
-    <div className={styles.Container + ' container d-flex flex-wrap rounded'}>
-      {board.map((item) => {
-        return (
-          <Board key={item.id} image={item.image} boardName={item.boardName} clicked={() => boardHanlder(item.id)} />
-        )
-      })}
-      <Board image={`https://th.bing.com/th/id/OIP.7KQv5iIl5pP1RGC5ICS5SQHaEo?pid=ImgDet&rs=1`} boardName="Create new Room" clicked={() => boardHanlder()}></Board>
+    <div className="container">
+      <Modal
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={isAddRoomVisible}
+        onHide={() => setIsAddRoomVisible(false)}
+      >
+        <Modal.Header>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Creating new Room...
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <h5>What will be the name for your room</h5>
+          <FormControl
+            placeholder="Enter Room's name here"
+            aria-label="Room's Name"
+            aria-describedby="basic-addon1"
+            name="name"
+            required
+            value={room.name}
+            onChange={handleChange}
+          />
+          <br />
+          <br />
+          <h5 className="fs-6">Some description</h5>
+          <FormControl
+            placeholder="Enter description here"
+            aria-label="Description"
+            aria-describedby="basic-addon1"
+            name="description"
+            value={room.description}
+            onChange={handleChange}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setIsAddRoomVisible(false);
+              setRoom({
+                name: "",
+                description: "",
+              });
+            }}
+          >
+            Cancel
+          </Button>
+          <Button onClick={createBoardHandler}>Create Now!</Button>
+        </Modal.Footer>
+      </Modal>
+      <Button onClick={() => setIsAddRoomVisible(true)}>Tạo phòng mới</Button>
+      <div className={styles.Container + " container d-flex flex-wrap rounded"}>
+        {rooms.map((room) => {
+          const { name, id } = room;
+          return (
+            <Board
+              key={id}
+              image={`https://dncache-mauganscorp.netdna-ssl.com/thumbseg/58/58558-bigthumbnail.jpg`}
+              boardName={name}
+              clicked={() => boardHanlder(id)}
+            />
+          );
+        })}
+      </div>
     </div>
-  )
+  );
 }
