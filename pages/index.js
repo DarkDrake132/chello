@@ -102,7 +102,7 @@ export default function Home() {
           <Button onClick={createBoardHandler}>Create Now!</Button>
         </Modal.Footer>
       </Modal>
-      <Button onClick={() => setIsAddRoomVisible(true)}>Tạo phòng mới</Button>
+      <Button style={{ marginTop: 10, marginLeft: 20 }} onClick={() => setIsAddRoomVisible(true)}>Tạo phòng mới</Button>
       <div className={styles.Container + " container d-flex flex-wrap rounded"}>
         {rooms.map((room) => {
           const { name, id } = room;

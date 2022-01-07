@@ -8,7 +8,7 @@ export default function RoomList() {
   const { board } = router.query;
 
   return (
-    <div>
+    <div style={{ background: "#F1F2F5", height: "85vh" }}>
       <Accordion>
         <Accordion.Item eventKey="0">
           <Accordion.Header>Milestones</Accordion.Header>

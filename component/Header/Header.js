@@ -6,6 +6,7 @@ import {
   OverlayTrigger,
 } from "react-bootstrap";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 import Avatar from "@atlaskit/avatar";
 
@@ -28,14 +29,15 @@ function Header() {
   );
 
   return (
-    <Navbar bg="primary" variant="dark" style={{ fontWeight: "bold" }}>
+    <Navbar variant="dark" style={{ fontWeight: "bold", borderBottom: "1px solid black"}}>
       <Container>
         <Navbar.Brand
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", color: "black" }}
           onClick={() => {
             router.push("/");
           }}
         >
+          <Image src="/logo.png" alt="Chello Logo" width="20" height="20" />
           Chello
         </Navbar.Brand>
         <Navbar.Toggle />
@@ -46,17 +48,18 @@ function Header() {
               placement="bottom"
               overlay={popover}
             >
-              <Button>
-                <div>
+              <Button style={{ background: 'white', border: 'none' }}>
+                <div className="d-flex">
                   <Avatar src={user?.photoURL} size="small" alt="Bach" />
-                  <Navbar.Text
+                  <p
                     style={{
                       marginLeft: "1rem",
-                      color: "white",
+                      color: "black",
+                      marginBottom: "0.5rem",
                     }}
                   >
                     {user?.displayName}
-                  </Navbar.Text>
+                  </p>
                 </div>
               </Button>
             </OverlayTrigger>

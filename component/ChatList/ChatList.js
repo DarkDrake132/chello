@@ -34,7 +34,7 @@ export default function ChatList() {
     <div
       className="d-flex align-items-start-end flex-column justify-content-end"
       style={{
-        height: "80vh",
+        height: "85vh",
         padding: "10px",
         maxHeight: "100%",
         overFlowY: "auto",
