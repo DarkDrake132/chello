@@ -1,10 +1,10 @@
-import { InputGroup, FormControl } from "react-bootstrap"
+import { InputGroup, FormControl,Form, Button } from "react-bootstrap"
 import { useState } from "react"
 import styles from './List.module.css'
 import { FiMoreHorizontal } from "react-icons/fi";
 import { useContext } from "react";
 import storeApi from "../../utils/storeApi";
-const Title = ({title, listId}) =>{
+const Title = ({title, listId, setName, hiden}) =>{
     const [newTitle, setNewTitle] = useState(title)
     const [open, setOpen] = useState(false)
     const {updateListTitle} = useContext(storeApi)
@@ -13,21 +13,54 @@ const Title = ({title, listId}) =>{
     }
 
     const handleOnBlur = () =>{
-        updateListTitle(newTitle, listId)
-        setOpen(false)
+        if(newTitle===''){
+            setName={title}
+            setOpen(false)
+        }
+        else{
+            updateListTitle(newTitle, listId)
+            setName(newTitle)
+            setOpen(false)
+        }
+    
     }
+
+    const handleClickMore = ()=>{
+        setClickMore(!clickMore)
+
+    }
+
+    const handleDelete = ()=>{
+        hiden = listId
+        console.log("dfsdf", hiden);
+        setClickMore(false)
+    }
+
+    const [clickMore, setClickMore] = useState(false)
+
     return(
         <div >
             <div>
                 {open?(
                     <InputGroup className="mb-3">
-                        <FormControl defaultValue={title} onBlur={handleOnBlur} autoFocus
+                        <Form.Control defaultValue={title} onBlur={handleOnBlur} autoFocus
                         onChange={handleOnChange}/>
                     </InputGroup>
                 ):(
-                    <div onClick={()=> setOpen(!open)} className="d-flex justify-content-space-between">
-                        <div className={styles.title}>{title}</div>
-                        <div><FiMoreHorizontal size={28}/></div>
+                    <div className="d-flex justify-content-space-between">
+                        <div className={styles.title} onClick={()=> setOpen(!open)} >{title}</div>
+                        <div>
+                            {
+                                clickMore?<div>
+                                    <div style={{marginLeft: "42px"}}>
+                                    <FiMoreHorizontal size={28} onClick={handleClickMore} />
+                                    </div>
+                                    
+                                    <Button variant="danger" className="position-sticky" onClick={handleDelete} >Delete</Button>
+                                </div>:<FiMoreHorizontal size={28} onClick={handleClickMore}/>
+                            }
+                        
+                        </div>
                     </div>
                 )}
             </div>

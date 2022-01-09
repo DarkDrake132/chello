@@ -2,14 +2,14 @@ import List from "../../component/List/List"
 
 import { useRouter } from "next/router";
 import store from '../../utils/store'
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import StoreApi from "../../utils/storeApi"
 import { uuid } from "uuidv4"
 import InputContainer from "../../component/Input/InputContainer"
 import { DragDropContext } from "react-beautiful-dnd"
 import { Droppable } from "react-beautiful-dnd"
 import { useApp } from "../../context/AppProvider";
-import { addMember, removeMember } from "../../firebase/service";
+import { addMember, removeMember, getBoard, addList, renameList, moveTask } from "../../firebase/service";
 
 import BoardLayout from "../../hoc/BoardLayout/BoardLayout";
 import {
@@ -20,62 +20,102 @@ import {
   FormControl,
 } from "react-bootstrap";
 import Avatar from "@atlaskit/avatar";
+import { values } from "lodash";
 
 export default function Board() {
-    const router = useRouter();
-    const [data, setData] = useState(store)
-    const addMoreTask = (name, listId)=>{
-        const newTaskId = uuid();
-        const newTask ={
-            id: newTaskId,
-            name: name
-        }
 
-        const list = data.lists[listId]
-        list.tasks=[...list.tasks,newTask]
+  const [newMember, setNewMember] = useState("");
+  const { members, isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId } = useApp();
+  const router = useRouter();
+  const [data, setData] = useState([])
+  let [listsId, setListsId] = useState([])
+    const [idListHiden, setIdListHiden] = useState('')
+    useEffect(() => {
+       const getData = async () =>{
+        const dl = await getBoard(selectedRoomId)
+        console.log(dl.lists);
+        // let data = await Promise.all(dl.lists)
+        // console.log(dl);
+        // data = await data.map(values =>  Promise.all(values.tasks).then(values => values.taskName))
+        // data =   data.map(values => values)
+        // console.log("data: ",data);
+    
+        setListsId(dl.listsId)
+        console.log("dl.list: ", dl.listsId);
+    //     const datalist = await Promise.all(dl.lists).then((values) => {
+    //         return values})
+        
+    //    const zdata =  datalist.map(i =>{
+    //         return  Promise.all(i.tasks).then( values => values)
+    //     } )
 
-        const newState = {
-            ...data,
-            lists:{
-                ...data.lists,
-                [listId]: list
-            }
-        }
-        setData(newState)
-    }
+    //     const zzdata = await Promise.all(zdata).then(values=> values)
+    //     console.log("object: ", zzdata);
+        setData(dl.lists);
+       }  
+        getData();
+    }, []);
+
+    // listsId = listsId.filter(item => item!== idListHiden)
+
+    
+    // const addMoreTask = (name, listId)=>{
+    //     const newTaskId = uuid();
+    //     const newTask ={
+    //         id: newTaskId,
+    //         name: name
+    //     }
+
+    //     const list = data.lists[listId]
+    //     list.tasks=[...list.tasks,newTask]
+
+    //     const newState = {
+    //         ...data,
+    //         lists:{
+    //             ...data.lists,
+    //             [listId]: list
+    //         }
+    //     }
+    //     setData(newState)
+    // }
 
     const addMoreList = (title) =>{
         const newListId = uuid()
-        const newList = {
-            id: newListId,
-            title,
-            tasks: []
-        };
+        // const newList = {
+        //     id: newListId,
+        //     title,
+        //     tasks: []
+        // };
+        addList(newListId,title,selectedRoomId)
+        // const newState ={
+        //     listsIds: [...data.listsIds, newListId],
+        //     lists:{
+        //         ...data.lists,
+        //         [newListId]: newList
+        //     }
+        // }
+        const newState = [...listsId, newListId]
 
-        const newState ={
-            listsIds: [...data.listsIds, newListId],
-            lists:{
-                ...data.lists,
-                [newListId]: newList
-            }
-        }
-
-        setData(newState);
+        setListsId(newState);
     }
 
     const updateListTitle = (title, listId)=>{
-        const list = data.lists[listId]
-        list.title = title
-        const newState = {
-            ...data,
-            lists:{
-                ...data.lists,
-                [listId]: list
-            }
-        }
-        setData(newState)
+
+      // setIdTitleUpdate
+      renameList(listId, title)
+        // const list = data.lists[listId]
+        // list.title = title
+        // const newState = {
+        //     ...data,
+        //     lists:{
+        //         ...data.lists,
+        //         [listId]: list
+        //     }
+        // }
+        // setData(newState)
     }
 
+    const [update,setUpdate] = useState(false) 
     const onDragEnd = (result)=>{
         const {destination, source, draggableId, type} = result;
         if(!destination){
@@ -83,47 +123,54 @@ export default function Board() {
         }
 
         if(type ==='list'){
-            const newListIds = data.listsIds
-            newListIds.splice(source.index,1)
-            newListIds.splice(destination.index,0,draggableId)
+            // const newListIds = data.listsIds
+            // newListIds.splice(source.index,1)
+            // newListIds.splice(destination.index,0,draggableId)
             return
         }
+        const sourceList = source.droppableId
+        const destinationList = destination.droppableId
+        // const draggingTask = sourceList.tasks.filter((task) => task.id == draggableId)[0]
 
-        const sourceList = data.lists[source.droppableId]
-        const destinationList = data.lists[destination.droppableId]
-        const draggingTask = sourceList.tasks.filter((task) => task.id == draggableId)[0]
+        // const sourceList = data.lists[source.droppableId]
+        // const destinationList = data.lists[destination.droppableId]
+        // const draggingTask = sourceList.tasks.filter((task) => task.id == draggableId)[0]
         if(source.droppableId === destination.droppableId){
-            sourceList.tasks.splice(source.index,1)
-            destinationList.tasks.splice(destination.index, 0, draggingTask)
-            const newState={
-                ...data,
-                lists:{
-                    ...data.lists,
-                    [sourceList.id]: destinationList
-                }
-            }
+            // sourceList.tasks.splice(source.index,1)
+            // destinationList.tasks.splice(destination.index, 0, draggingTask)
+            // const newState={
+            //     ...data,
+            //     lists:{
+            //         ...data.lists,
+            //         [sourceList.id]: destinationList
+            //     }
+            // }
 
-            setData(newState)
+            // setData(newState)
+            return
         }else{
-            sourceList.tasks.splice(source.index,1)
-            destinationList.tasks.splice(destination.index,0,draggingTask)
 
-            const newState={
-                ...data,
-                lists:{
-                    ...data.lists,
-                    [sourceList.id]:sourceList,
-                    [destinationList.id]: destinationList
-                }
-            }
+            moveTask(draggableId, sourceList, destinationList)
+            setUpdate(true)
+            // sourceList.tasks.splice(source.index,1)
+            // destinationList.tasks.splice(destination.index,0,draggingTask)
 
-            setData(newState)
+            // const newState={
+            //     ...data,
+            //     lists:{
+            //         ...data.lists,
+            //         [sourceList.id]:sourceList,
+            //         [destinationList.id]: destinationList
+            //     }
+            // }
+            
+            // setData(newState)
+            
         }
     }
 
    
-        const [newMember, setNewMember] = useState("");
-        const { members, isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId } = useApp();
+    
 
   function handleChange(e) {
     e.preventDefault();
@@ -214,15 +261,16 @@ export default function Board() {
         <div className="mx-2"></div>
         {avatar}
       </div>
-      <StoreApi.Provider value={{addMoreTask, addMoreList, updateListTitle}}>
+      <StoreApi.Provider value={{ addMoreList, updateListTitle}}>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="app" type='list' direction="horizontal">
                     {(provided)=>(
                         <div style={{margin: "50px"}} className="d-flex justify-content-start" ref={provided.innerRef}{...provided.droppableProps}>
                             {
-                                data.listsIds.map((listId, index)=>{
-                                    const list = data.lists[listId]
-                                    return <List list={list} key ={listId} index={index}/>
+                               
+                                listsId.map((list, index)=>{
+                                    // const list = data.lists[listId]
+                                    return <List list={list} key ={index} index={index} hiden={setIdListHiden}/>
                                 })
                             }
                             <InputContainer type="list"/>

@@ -15,6 +15,7 @@ export default function Home() {
   const [room, setRoom] = useState({
     name: "",
     description: "",
+    lists: []
   });
   const { setSelectedRoomId } = useApp();
 
@@ -37,6 +38,7 @@ export default function Home() {
       setRoom({
         name: "",
         description: "",
+        lists: []
       });
     }
   }

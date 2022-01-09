@@ -2,20 +2,25 @@ import { useState, useContext } from "react";
 import { FloatingLabel, Form, Button } from "react-bootstrap"
 import { MdClear } from "react-icons/md";
 import storeApi from "../../utils/storeApi";
-export default function InputCard({setOpen, listId, type}) {
+export default function InputCard({setOpen, listId, type, addType}) {
     const [cardName, setCardName] = useState(null)
     const handleOnChange = (e)=>{
         setCardName(e.target.value)
     }
-    const {addMoreTask, addMoreList} = useContext(storeApi)
+    const { addMoreList} = useContext(storeApi)
 
     const handleBtnConfirm =()=>{
         if(type === "card"){
-            addMoreTask(cardName, listId)
-            setCardName(null)
-            setOpen(false)
+            if(cardName === null){
+                setOpen(false)
+            }
+            else{
+                addType(cardName, listId)
+                setCardName(null)
+                setOpen(false)
+            }
         } else{
-            if(cardName==null){
+            if(cardName===null){
                 setOpen(false)
             }
             else{
