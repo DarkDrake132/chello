@@ -5,6 +5,7 @@ import {
   Timestamp,
   query,
   where,
+  getDoc,
   getDocs,
   updateDoc,
   arrayUnion,
@@ -22,8 +23,7 @@ export const addDocument = (collectionName, data) => {
   setDoc(collectionRef, docData);
 };
 
-<<<<<<< Updated upstream
-=======
+
 
 export const getBoard = async (boardId) => {
   const boardRef = doc(db, "rooms", boardId);
@@ -35,8 +35,8 @@ export const getBoard = async (boardId) => {
     ...board
   })
   board.listsId = board.lists.map( list => list);
- 
-  board.lists = await board.lists.map( list => getList(list));
+
+  board.lists = board.lists.map( list => getList(list));
   
   return board;
 }
@@ -63,7 +63,7 @@ export const moveTask = async (taskId, listFrom, listTo) => {
   const listFromRef = doc(db, "lists", listFrom);
   
   await updateDoc(listFromRef, {
-    tasks: arrayRemove(taskId),
+    tasks: arrayRemove(taskId)
   });
   
   // add to new list
@@ -103,7 +103,7 @@ export const getList = async (listId) => {
   })
   list.tasksId = list.tasks.map(taskId => taskId);
 
-  list.tasks = await list.tasks.map(taskId => getTask(taskId));
+  list.tasks = list.tasks.map(taskId => getTask(taskId));
   return list;
   
 }
@@ -141,7 +141,6 @@ export const addList = async (listId, listName, boardId) => {
   });
 }
 
->>>>>>> Stashed changes
 export const findUser = async (data) => {
   const q = query(collection(db, "users"), where("email", "==", data));
 

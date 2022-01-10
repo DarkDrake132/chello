@@ -9,7 +9,7 @@ import InputContainer from "../../component/Input/InputContainer"
 import { DragDropContext } from "react-beautiful-dnd"
 import { Droppable } from "react-beautiful-dnd"
 import { useApp } from "../../context/AppProvider";
-import { addMember, removeMember, getBoard, addList, renameList, moveTask } from "../../firebase/service";
+import { addMember, removeMember, getBoard, addList,hideList, renameList, moveTask } from "../../firebase/service";
 
 import BoardLayout from "../../hoc/BoardLayout/BoardLayout";
 import {
@@ -28,35 +28,43 @@ export default function Board() {
   const { members, isInviteMemberVisible, setIsInviteMemberVisible, selectedRoomId } = useApp();
   const router = useRouter();
   const [data, setData] = useState([])
-  let [listsId, setListsId] = useState([])
+  const [listsId, setListsId] = useState([])
     const [idListHiden, setIdListHiden] = useState('')
-    useEffect(() => {
-       const getData = async () =>{
-        const dl = await getBoard(selectedRoomId)
-        console.log(dl.lists);
-        // let data = await Promise.all(dl.lists)
-        // console.log(dl);
-        // data = await data.map(values =>  Promise.all(values.tasks).then(values => values.taskName))
-        // data =   data.map(values => values)
-        // console.log("data: ",data);
-    
-        setListsId(dl.listsId)
-        console.log("dl.list: ", dl.listsId);
-    //     const datalist = await Promise.all(dl.lists).then((values) => {
-    //         return values})
-        
-    //    const zdata =  datalist.map(i =>{
-    //         return  Promise.all(i.tasks).then( values => values)
-    //     } )
+    const getData = async () =>{
+      const dl = await getBoard(selectedRoomId)
 
-    //     const zzdata = await Promise.all(zdata).then(values=> values)
-    //     console.log("object: ", zzdata);
-        setData(dl.lists);
-       }  
+      setListsId(dl.listsId)
+    
+
+      setData(dl.lists);}
+    
+    useEffect(() => {
+    //     const getData = async () =>{
+    //     const dl = await getBoard(selectedRoomId)
+    //     console.log(dl.lists);
+    //     // let data = await Promise.all(dl.lists)
+    //     // console.log(dl);
+    //     // data = await data.map(values =>  Promise.all(values.tasks).then(values => values.taskName))
+    //     // data =   data.map(values => values)
+    //     // console.log("data: ",data);
+    
+    //     setListsId(dl.listsId)
+    //     console.log("dl.list: ", dl.listsId);
+    // //     const datalist = await Promise.all(dl.lists).then((values) => {
+    // //         return values})
+        
+    // //    const zdata =  datalist.map(i =>{
+    // //         return  Promise.all(i.tasks).then( values => values)
+    // //     } )
+
+    // //     const zzdata = await Promise.all(zdata).then(values=> values)
+    // //     console.log("object: ", zzdata);
+    //     setData(dl.lists);
+    //    }  
         getData();
     }, []);
 
-    // listsId = listsId.filter(item => item!== idListHiden)
+    
 
     
     // const addMoreTask = (name, listId)=>{
@@ -115,7 +123,7 @@ export default function Board() {
         // setData(newState)
     }
 
-    const [update,setUpdate] = useState(false) 
+   
     const onDragEnd = (result)=>{
         const {destination, source, draggableId, type} = result;
         if(!destination){
@@ -149,9 +157,10 @@ export default function Board() {
             // setData(newState)
             return
         }else{
-
+       
             moveTask(draggableId, sourceList, destinationList)
-            setUpdate(true)
+            // getData();
+           
             // sourceList.tasks.splice(source.index,1)
             // destinationList.tasks.splice(destination.index,0,draggingTask)
 
@@ -169,6 +178,15 @@ export default function Board() {
         }
     }
 
+    const setHiden = (Listid)=>{
+      setIdListHiden(Listid)
+      hideList(Listid)
+      console.log("hiden:", Listid);
+      console.log("data:" , listsId);
+      setListsId(listsId.filter(item => item !== Listid))
+      console.log("object", listsId);
+   }
+   console.log("object:", listsId);
    
     
 
@@ -212,7 +230,8 @@ export default function Board() {
       </OverlayTrigger>
     );
   });
-
+   
+  console.log("datafinal", listsId);
   return (
     <BoardLayout>
       <Modal
@@ -261,17 +280,17 @@ export default function Board() {
         <div className="mx-2"></div>
         {avatar}
       </div>
-      <StoreApi.Provider value={{ addMoreList, updateListTitle}}>
+      <StoreApi.Provider value={{ addMoreList, updateListTitle,setHiden}}>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="app" type='list' direction="horizontal">
                     {(provided)=>(
                         <div style={{margin: "50px"}} className="d-flex justify-content-start" ref={provided.innerRef}{...provided.droppableProps}>
                             {
-                               
                                 listsId.map((list, index)=>{
                                     // const list = data.lists[listId]
-                                    return <List list={list} key ={index} index={index} hiden={setIdListHiden}/>
+                                    return <List list={list} key ={index} index={index} />
                                 })
+                              
                             }
                             <InputContainer type="list"/>
                             {provided.placeholder}

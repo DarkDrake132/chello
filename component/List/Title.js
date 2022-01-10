@@ -7,7 +7,7 @@ import storeApi from "../../utils/storeApi";
 const Title = ({title, listId, setName, hiden}) =>{
     const [newTitle, setNewTitle] = useState(title)
     const [open, setOpen] = useState(false)
-    const {updateListTitle} = useContext(storeApi)
+    const {updateListTitle, setHiden} = useContext(storeApi)
     const handleOnChange =(e)=>{
         setNewTitle(e.target.value)
     }
@@ -31,8 +31,9 @@ const Title = ({title, listId, setName, hiden}) =>{
     }
 
     const handleDelete = ()=>{
-        hiden = listId
-        console.log("dfsdf", hiden);
+        // hiden = listId
+        setHiden(listId)
+        console.log("dfsdf:", hiden);
         setClickMore(false)
     }
 

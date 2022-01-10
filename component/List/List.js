@@ -7,19 +7,22 @@ import { Draggable } from 'react-beautiful-dnd'
 import { useEffect, useState } from 'react'
 import { addTask, getList } from '../../firebase/service'
 import { uuid } from 'uuidv4'
+import { isNull } from 'lodash'
 
 
 function List({list, index, hiden}){
     const [tasksId, setTasksId] = useState([])
     const [listName, setListName] = useState('')
+    const [isHiden, setIsHiden] = useState('')
     useEffect(() => {
         const getData = async () =>{
          const dl = await getList(list)
          setListName(dl.listName)
+         setIsHiden(dl.isHidden)
          setTasksId(dl.tasksId);
         }  
          getData();
-     }, []);
+     });
 
      
 
@@ -51,10 +54,14 @@ function List({list, index, hiden}){
 
     
     return(
-        <Draggable draggableId={list} index={index}>
+        <div>
+
+            {
+                isHiden?null:
+                <Draggable draggableId={list} index={index}>
             {(provided)=>(
                 <div {...provided.draggableProps} ref={provided.innerRef}>
-
+                    
                     <div className={styles.container} {...provided.dragHandleProps} >
                         <Title title={listName} listId={list} setName={setListName} hiden={hiden}/>
                        
@@ -71,9 +78,13 @@ function List({list, index, hiden}){
                        
                         <InputContainer listId={list} type="card" addType={addMoreTask}/>
                     </div>
+                    
+                   
                 </div>
             )}
         </Draggable>
+            }
+        </div>
     )
 }
 
