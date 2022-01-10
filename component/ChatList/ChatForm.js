@@ -36,7 +36,7 @@ export default function ChatList() {
       className="d-flex justify-content-between"
       onSubmit={handleSubmitNewMessage}
     >
-      <Form.Group controlId="formBasicEmail" style={{ width: "70%" }}>
+      <Form.Group controlId="formBasicEmail" style={{ width: "80%", marginLeft: "10px"}}>
         <Form.Control
           value={newMessage}
           onEnter={handleSubmitNewMessage}

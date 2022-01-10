@@ -27,7 +27,7 @@ const useFirestore = (collectionQuery, condition) => {
           id: doc.id,
         };
       })
-      setDocument(documents);
+      setDocument(documents.sort((a, b) => a.createdAt - b.createdAt));
     });
 
     return unsubscribe;
